@@ -1,0 +1,65 @@
+
+
+.ArrowDown {
+
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 30px solid #000;
+    transform: translate(0%, 20px);
+    width: 1%;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.8;
+    transition: all 0.6s ease-out;
+}
+
+.ArrowDown-Spinning {
+    transform: translate(0%, 36px);
+    opacity: 1;
+}
+
+.pandito {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%);
+    width: 170px;
+    height: 170px;
+    background-image: url(../assets/img/party_pandito.png);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: 180px auto;
+    transition: all 0.5s ease-out;
+    border: none;
+    outline: none;
+}
+
+.pandito:focus {
+    border: none;
+    outline:none;
+}
+
+.WheelResult {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -47%);
+    font-size: 60px;
+    line-height: 1.6;
+    color: #fff;
+    padding: 20px;
+    border-radius: 50%;
+    width: 500px;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 1s ease-out;
+    font-weight: bolder;
+    word-break: break-all;
+
+}
+
+.none {
+    display: none !important;
+}
