@@ -1,38 +1,85 @@
-import React, { useContext, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
+import React, { useContext, useEffect, useRef } from 'react';
 
-import { v4 as uuidv4 } from 'uuid';
-
-import UsersList from '../components/UsersList';
-import ResultsList from '../components/ResultsList';
-import { RouletteContext } from '../context/roulette/RouletteContext';
-import RouletteTypes from '../types';
+import { v4 as uuid } from 'uuid';
+import { startValidatingRouletteToken } from '../actions/roulette';
+import { RootState } from '../types/state.types';
+import LoadingFullScreen from '../components/LoadingFullScreen';
+import Error from '../components/RoulettePage/Error';
 import { SocketContext } from '../context/SocketContext';
+import { IUser } from '../interfaces/roulette';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 let wheel: any;
 
-const RoulettePage: React.FC = () => {
+const RoulettePage = (): JSX.Element => {
+    const { loadingRouletteChecking, errorRouletteChecking } = useSelector(
+        (state: RootState) => state.ui,
+    );
+
     const {
-        rouletteState: {
-            users,
-            winnerObject,
-            activeWinner,
-            spinning,
-            defaultRouletteActive,
-            colorIndex,
-            defaultUsers,
-            colors,
-        },
-        dispatch,
-    } = useContext(RouletteContext);
+        users,
+        winnerObject,
+        activeWinner,
+        spinning,
+        defaultRouletteActive,
+        colorIndex,
+    } = useSelector((state: RootState) => state.roulette);
+
+    const {
+        rouletteDuration,
+        rouletteLaps,
+        rouletteWinnerDuration,
+        song,
+        imageUrl,
+        songUrl,
+        defaultUsers,
+        colors,
+    } = useSelector((state: RootState) => state.settings);
+
+    const { twitchProfileImageUrl } = useSelector((state: RootState) => state.auth);
 
     const { socket } = useContext(SocketContext);
+    const dispatch = useDispatch();
+    const history = useHistory();
 
-    const audio = new Audio('/assets/rouletteaudio.mp3');
+    const { token } = useParams<{ token: string }>();
 
-    const createRoulette = (usersArg: UserType[]) => {
+    const divRef = useRef<HTMLDivElement>(null);
+    let audio: HTMLAudioElement;
+
+    if (songUrl) {
+        audio = new Audio(songUrl);
+        audio.muted = true;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const alertPrize = (indicatedSegment: any) => {
+        const { text, fillStyle } = indicatedSegment;
+
+        socket?.emit('set-winner', { text, fillStyle });
+
+        socket?.emit('set-result', { winner: text, uid: uuid() });
+
+        setTimeout(() => {
+            socket?.emit('hide-winner');
+        }, rouletteWinnerDuration * 1000);
+    };
+
+    // TODO: Handle this
+    const createRoulette = (usersArg: any[]) => {
+        let newUsersArg;
+        if (!usersArg[0].name) {
+            newUsersArg = usersArg.map((user) => ({ name: user, uid: uuid() }));
+        } else {
+            newUsersArg = usersArg;
+        }
+
         let ind = 0;
 
-        const segments = usersArg.map((user) => {
+        // TODO: Handle this too
+        const segments = newUsersArg.map((user: any) => {
             const segmentObj = {
                 fillStyle: colors[ind],
                 text: user.name,
@@ -42,9 +89,10 @@ const RoulettePage: React.FC = () => {
             };
 
             ind += 1;
-            if (ind > 6) ind = 0;
+            if (ind >= colors.length) ind = 0;
             return segmentObj;
         });
+
         // eslint-disable-next-line
         // @ts-ignore
         return new Winwheel({
@@ -59,26 +107,18 @@ const RoulettePage: React.FC = () => {
             // Specify the animation to use.
             animation: {
                 type: 'spinToStop',
-                duration: 5,
-                spins: 3,
+                duration: rouletteDuration,
+                spins: rouletteLaps,
                 // eslint-disable-next-line @typescript-eslint/no-use-before-define
                 callbackFinished: alertPrize, // Function to call whent the spinning has stopped.
             },
         });
     };
 
-    const alertPrize = (indicatedSegment: any) => {
-        dispatch({ type: RouletteTypes.SetActiveWinner, payload: true });
-        dispatch({ type: RouletteTypes.SetActiveWinner, payload: true });
-
-        const { text, fillStyle } = indicatedSegment;
-
-        dispatch({ type: RouletteTypes.SetWinnerObject, payload: { text, fillStyle } });
-        dispatch({ type: RouletteTypes.SetResult, payload: { result: text } });
-    };
-
-    const onSpinClick = () => {
+    const spinRoulette = () => {
         if (spinning) return;
+
+        socket?.emit('spin-roulette-state');
 
         if (defaultRouletteActive) {
             wheel = createRoulette(defaultUsers);
@@ -86,26 +126,21 @@ const RoulettePage: React.FC = () => {
             wheel = createRoulette(users);
         }
 
-        audio.play();
+        if (song && songUrl) {
+            audio.play();
+            audio.muted = false;
+        }
+
         wheel.startAnimation();
-        dispatch({ type: RouletteTypes.SetSpinning, payload: true });
     };
 
-    const hideWinner = () => {
-        dispatch({ type: RouletteTypes.SetActiveWinner, payload: false });
-        dispatch({ type: RouletteTypes.SetSpinning, payload: false });
-    };
-
-    const addUser = (user: UserType) => {
+    const addUser = (user: IUser) => {
         if (spinning) return;
 
-        dispatch({ type: RouletteTypes.SetUser, payload: user });
+        // TODO: Dejar que se añadan usuarios en la pantalla donde sale el ganador
 
         if (defaultRouletteActive) {
             wheel = createRoulette([user]);
-
-            dispatch({ type: RouletteTypes.IncrementColorIndex });
-            dispatch({ type: RouletteTypes.SetDefaultRouletteActive, payload: false });
         } else {
             wheel.addSegment({
                 text: user.name,
@@ -116,19 +151,13 @@ const RoulettePage: React.FC = () => {
             });
 
             wheel.draw();
-
-            dispatch({ type: RouletteTypes.IncrementColorIndex });
-
-            if (colorIndex >= 6) dispatch({ type: RouletteTypes.ResetColorIndex });
         }
     };
 
-    const removeUser = (name: string, uid: string) => {
-        dispatch({ type: RouletteTypes.DeleteUser, payload: uid });
+    const removeUser = (uid: string) => {
         const newUsers = users.filter((user) => user.uid !== uid);
 
         if (users.length <= 1) {
-            dispatch({ type: RouletteTypes.SetDefaultRouletteActive, payload: true });
             wheel = createRoulette(defaultUsers);
         } else {
             wheel = createRoulette(newUsers);
@@ -136,79 +165,111 @@ const RoulettePage: React.FC = () => {
     };
 
     const removeAllUsers = () => {
-        dispatch({ type: RouletteTypes.DeleteAllUsers });
-
         wheel.segments.forEach(() => wheel.deleteSegment());
-
-        dispatch({ type: RouletteTypes.SetDefaultRouletteActive, payload: true });
-        dispatch({ type: RouletteTypes.ResetColorIndex });
         wheel = createRoulette(defaultUsers);
         wheel.draw();
     };
 
+    const reDrawDefault = () => {
+        if (defaultRouletteActive) {
+            wheel = createRoulette(defaultUsers);
+            wheel.draw();
+        }
+    };
+
+    const forceReDraw = () => {
+        if (defaultRouletteActive) {
+            wheel = createRoulette(defaultUsers);
+            wheel.draw();
+        } else {
+            wheel = createRoulette(users);
+            wheel.draw();
+        }
+    };
+
     useEffect(() => {
-        wheel = createRoulette(defaultUsers);
+        dispatch(startValidatingRouletteToken(token));
+    }, [dispatch, token]);
+
+    useEffect(() => {
+        if (!loadingRouletteChecking && !errorRouletteChecking) {
+            if (defaultRouletteActive) wheel = createRoulette(defaultUsers);
+            if (!defaultRouletteActive) wheel = createRoulette(users);
+
+            // TODO: Revisar una mejor forma de gestionar esto (en obs sin el setTimeout no emite el evento)
+            setTimeout(() => socket?.emit('new-instance-roulette'), 500);
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [loadingRouletteChecking, errorRouletteChecking]);
 
     useEffect(() => {
-        socket?.on('addUser', ({ name, fromMod }: { name: string; fromMod: boolean }) => {
-            if (fromMod) {
-                addUser({ name, uid: uuidv4() });
-            } else {
-                if (users.find((user) => user.name === name)) return;
-                addUser({ name, uid: uuidv4() });
-            }
-        });
+        socket?.on('new-instance-roulette', () => history.push('/new-instance', { error: true }));
 
-        return () => socket?.off('addUser');
-    }, [socket, users, spinning, defaultRouletteActive, colorIndex, addUser]);
+        return () => socket?.off('new-instance-roulette');
+    }, [socket, history]);
+
+    useEffect(() => {
+        let bgImageUrl: string;
+
+        if (imageUrl) {
+            bgImageUrl = `url('${imageUrl}')`;
+            if (divRef.current && bgImageUrl) divRef.current.style.backgroundImage = bgImageUrl;
+        } else if (twitchProfileImageUrl) {
+            bgImageUrl = `url('${twitchProfileImageUrl}')`;
+            if (divRef.current && bgImageUrl) divRef.current.style.backgroundImage = bgImageUrl;
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [imageUrl]);
+
+    useEffect(() => {
+        socket?.on('spin-roulette', () => spinRoulette());
+
+        socket?.on('add-user-roulette', (user: { name: string; uid: string; fromMod: boolean }) =>
+            addUser(user),
+        );
+
+        socket?.on('remove-user-roulette', (userUid: string) => removeUser(userUid));
+        socket?.on('remove-all-users-roulette', () => removeAllUsers());
+
+        socket?.on('re-draw-default-roulette', () => reDrawDefault());
+        socket?.on('force-re-draw-roulette', () => forceReDraw());
+
+        return () => {
+            socket?.off('add-user-roulette');
+            socket?.off('spin-roulette');
+            socket?.off('remove-user-roulette');
+            socket?.off('remove-all-users-roulette');
+            socket?.off('re-draw-default-roulette');
+            socket?.off('force-re-draw-roulette');
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [socket, users, defaultUsers, colors, spinning, defaultRouletteActive, colorIndex]);
 
     return (
-        <div>
-            <div className='flex h-screen items-center justify-around'>
-                <UsersList removeUser={removeUser} removeAllUsers={removeAllUsers} />
-
-                <div
-                    className={`${
-                        spinning ? '' : 'hover:opacity-80'
-                    } transition ease-in-out duration-200`}
-                >
-                    <div className={` ${spinning ? 'ArrowDown-Spinning' : ''} ArrowDown`} />
-                    <canvas
-                        id='canvas'
-                        className={`${spinning ? '' : 'cursor-pointer'} focus:outline-none`}
-                        width='510'
-                        height='510'
-                        onClick={onSpinClick}
-                    />
-                    <div
-                        role='button'
-                        tabIndex={-1}
-                        className={` ${spinning ? 'cursor-default' : ''} pandito`}
-                        onClick={onSpinClick}
-                        onKeyPress={() => {}}
-                        aria-label='icon'
-                    />
-                    <div
-                        className={`${activeWinner ? '' : 'none'} WheelResult focus:outline-none`}
-                        style={
-                            activeWinner
-                                ? { backgroundColor: `${winnerObject.fillStyle}D8` }
-                                : { backgroundColor: 'none' }
-                        }
-                        onClick={hideWinner}
-                        role='button'
-                        onKeyPress={() => {}}
-                        tabIndex={-1}
-                    >
-                        {winnerObject.text}
+        <>
+            {loadingRouletteChecking && <LoadingFullScreen />}
+            {!loadingRouletteChecking && errorRouletteChecking ? (
+                <Error />
+            ) : (
+                <div className='flex h-screen background-transparent items-center justify-around'>
+                    <div>
+                        <div className={` ${spinning ? 'ArrowDown-Spinning' : ''} ArrowDown`} />
+                        <canvas id='canvas' width='510' height='510' />
+                        <div ref={divRef} className='img-center' />
+                        <div
+                            className={` ${activeWinner ? '' : 'none'} WheelResult ml-3`}
+                            style={
+                                activeWinner
+                                    ? { backgroundColor: `${winnerObject.fillStyle}D8` }
+                                    : { backgroundColor: 'none' }
+                            }
+                        >
+                            {winnerObject.text}
+                        </div>
                     </div>
                 </div>
-
-                <ResultsList />
-            </div>
-        </div>
+            )}
+        </>
     );
 };
 

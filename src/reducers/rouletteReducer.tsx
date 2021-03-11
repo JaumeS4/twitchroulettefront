@@ -1,9 +1,35 @@
-import RouletteTypes from '../../types';
+import { ActionMap, RouletteStateType } from '../types/state.types';
+import { RoulettePayload } from '../types/payload.types';
+import { RouletteTypes } from '../types/action.types';
 
-export type RouletteActions = ActionMap<RoulettePayload>[keyof ActionMap<RoulettePayload>];
+export type NewRouletteActions = ActionMap<RoulettePayload>[keyof ActionMap<RoulettePayload>];
 
-const rouletteReducer = (state: RouletteStateType, action: RouletteActions): RouletteStateType => {
+const initialState = {
+    users: [],
+    results: [],
+    winnerObject: {
+        text: '',
+        fillStyle: '',
+    },
+    activeWinner: false,
+    spinning: false,
+    defaultRouletteActive: true,
+    colorIndex: 0,
+    subMode: false,
+    followMode: true,
+};
+
+const rouletteReducer = (
+    state: RouletteStateType = initialState,
+    action: NewRouletteActions,
+): RouletteStateType => {
     switch (action.type) {
+        case RouletteTypes.SetInitialRoulette:
+            return {
+                ...state,
+                ...action.payload,
+            };
+
         case RouletteTypes.SetSpinning:
             return {
                 ...state,
@@ -25,19 +51,32 @@ const rouletteReducer = (state: RouletteStateType, action: RouletteActions): Rou
                 },
             };
 
+        case RouletteTypes.SetUser:
+            return {
+                ...state,
+                users: [
+                    ...state.users,
+                    {
+                        name: action.payload.name,
+                        uid: action.payload.uid,
+                        fromMod: action.payload.fromMod,
+                    },
+                ],
+            };
+
         case RouletteTypes.SetResult:
             return {
                 ...state,
                 results: [
                     ...state.results,
-                    { result: action.payload.result, index: state.results.length + 1 },
+                    { winner: action.payload.winner, uid: action.payload.uid },
                 ],
             };
 
-        case RouletteTypes.SetUser:
+        case RouletteTypes.ClearResults:
             return {
                 ...state,
-                users: [...state.users, { name: action.payload.name, uid: action.payload.uid }],
+                results: [],
             };
 
         case RouletteTypes.DeleteUser:
@@ -68,6 +107,12 @@ const rouletteReducer = (state: RouletteStateType, action: RouletteActions): Rou
             return {
                 ...state,
                 defaultRouletteActive: action.payload,
+            };
+
+        case RouletteTypes.SetSubMode:
+            return {
+                ...state,
+                subMode: action.payload,
             };
 
         default:

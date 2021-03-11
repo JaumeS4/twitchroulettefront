@@ -1,16 +1,17 @@
 import React from 'react';
 
-import { SocketProvider } from './context/SocketContext';
+import { Provider } from 'react-redux';
 import AppRouter from './router/AppRouter';
-import { RouletteProvider } from './context/roulette/RouletteContext';
+import { SocketProvider } from './context/SocketContext';
+import store from './store/store';
 
 const App: React.FC = () => {
     return (
-        <RouletteProvider>
+        <Provider store={store}>
             <SocketProvider>
                 <AppRouter />
             </SocketProvider>
-        </RouletteProvider>
+        </Provider>
     );
 };
 
