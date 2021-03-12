@@ -42,6 +42,11 @@ export type SettingsStateType = {
     colors: Array<string>;
     songUrl: string | null;
     imageUrl: string | null;
+    imageWidth: number;
+    imageHeight: number;
+    imageBackgroundSize: number;
+    radioRoulette: number;
+    marginTextRoulette: number;
 };
 
 export type UiStateType = {

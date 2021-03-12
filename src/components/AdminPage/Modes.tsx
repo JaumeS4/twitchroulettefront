@@ -5,15 +5,19 @@ import { SocketContext } from '../../context/SocketContext';
 
 const Modes = (): JSX.Element => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { subMode, followMode } = useSelector((state: RootState) => state.roulette);
+    const { subMode, followMode, spinning } = useSelector((state: RootState) => state.roulette);
     const { song } = useSelector((state: RootState) => state.settings);
     const { socket } = useContext(SocketContext);
 
-    const handleChangeSubMode = ({ target: { checked } }: { target: { checked: boolean } }) =>
+    const handleChangeSubMode = ({ target: { checked } }: { target: { checked: boolean } }) => {
+        if (spinning) return;
         socket?.emit('update-sub-mode', checked);
+    };
 
-    const handleChangeSong = ({ target: { checked } }: { target: { checked: boolean } }) =>
+    const handleChangeSong = ({ target: { checked } }: { target: { checked: boolean } }) => {
+        if (spinning) return;
         socket?.emit('update-song', checked);
+    };
 
     return (
         <div className='rounded-lg overflow-hidden shadow-lg bg-white mb-5'>

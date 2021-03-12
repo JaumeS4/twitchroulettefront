@@ -11,6 +11,7 @@ export enum SettingsTypes {
     ClearSettings = 'CLEAR_SETTINGS',
     UpdateBasicSettings = 'UPDATE_BASIC_SETTINGS',
     UpdateSongUrl = 'UPDATE_SONG_URL',
+    UpdateImageSettings = 'UPDATE_IMAGE_SETTINGS',
     UpdateSongBool = 'UPDATE_SONG_BOOL',
     UpdateImageUrl = 'UPDATE_IMAGE_URL',
     UpdateDefaultUsers = 'UPDATE_DEFAULT_USERS',

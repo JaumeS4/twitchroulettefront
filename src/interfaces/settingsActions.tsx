@@ -1,4 +1,4 @@
-import { ISettings, ISettingsBasic } from './settings';
+import { ISettings, ISettingsBasic, ISettingsImage } from './settings';
 import { SettingsTypes } from '../types/action.types';
 
 export interface ISetInitialSettingsActionResponse {
@@ -8,6 +8,11 @@ export interface ISetInitialSettingsActionResponse {
 
 export interface IUpdateBasicSettingsActionResponse {
     payload: ISettingsBasic;
+    type: SettingsTypes;
+}
+
+export interface IUpdateImageSettingsActionResponse {
+    payload: ISettingsImage;
     type: SettingsTypes;
 }
 

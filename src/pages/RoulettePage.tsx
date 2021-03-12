@@ -36,6 +36,11 @@ const RoulettePage = (): JSX.Element => {
         songUrl,
         defaultUsers,
         colors,
+        imageHeight,
+        imageWidth,
+        imageBackgroundSize,
+        radioRoulette,
+        marginTextRoulette,
     } = useSelector((state: RootState) => state.settings);
 
     const { twitchProfileImageUrl } = useSelector((state: RootState) => state.auth);
@@ -97,7 +102,8 @@ const RoulettePage = (): JSX.Element => {
         // @ts-ignore
         return new Winwheel({
             outerRadius: 250, // Set outer radius so wheel fits inside the background.
-            innerRadius: 40, // Make wheel hollow so segments dont go all way to center.
+            innerRadius: radioRoulette, // Make wheel hollow so segments dont go all way to center.
+            textMargin: marginTextRoulette,
             textFontSize: 24, // Set default font size for the segments.
             textOrientation: 'horizontal', // Make text vertical so goes down from the outside of wheel.
             textAlignment: 'center', // Align text to outside of wheel.
@@ -213,6 +219,7 @@ const RoulettePage = (): JSX.Element => {
 
         if (imageUrl) {
             bgImageUrl = `url('${imageUrl}')`;
+
             if (divRef.current && bgImageUrl) divRef.current.style.backgroundImage = bgImageUrl;
         } else if (twitchProfileImageUrl) {
             bgImageUrl = `url('${twitchProfileImageUrl}')`;
@@ -220,6 +227,20 @@ const RoulettePage = (): JSX.Element => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [imageUrl]);
+
+    useEffect(() => {
+        if (divRef.current) {
+            divRef.current.style.width = `${imageWidth}px`;
+            divRef.current.style.height = `${imageHeight}px`;
+            divRef.current.style.backgroundSize = `${imageBackgroundSize}px ${imageBackgroundSize}px`;
+        }
+    }, [imageHeight, imageWidth, imageBackgroundSize]);
+
+    useEffect(() => {
+        if (spinning || loadingRouletteChecking || errorRouletteChecking) return;
+        forceReDraw();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [radioRoulette, marginTextRoulette]);
 
     useEffect(() => {
         socket?.on('spin-roulette', () => spinRoulette());
@@ -243,7 +264,7 @@ const RoulettePage = (): JSX.Element => {
             socket?.off('force-re-draw-roulette');
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [socket, users, defaultUsers, colors, spinning, defaultRouletteActive, colorIndex]);
+    }, [socket, users, defaultUsers, colors, song, spinning, defaultRouletteActive, colorIndex]);
 
     return (
         <>

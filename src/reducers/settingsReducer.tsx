@@ -13,6 +13,11 @@ const initialState = {
     colors: [],
     songUrl: '',
     imageUrl: '',
+    imageWidth: 170,
+    imageHeight: 170,
+    imageBackgroundSize: 180,
+    radioRoulette: 40,
+    marginTextRoulette: 0,
 };
 
 const settingsReducer = (
@@ -30,6 +35,12 @@ const settingsReducer = (
             return initialState;
 
         case SettingsTypes.UpdateBasicSettings:
+            return {
+                ...state,
+                ...action.payload,
+            };
+
+        case SettingsTypes.UpdateImageSettings:
             return {
                 ...state,
                 ...action.payload,

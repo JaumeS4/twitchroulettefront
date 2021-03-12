@@ -28,6 +28,7 @@ const schema = object().shape({
 
 const DefaultUsersListForm = (): JSX.Element => {
     const { defaultUsers } = useSelector((state: RootState) => state.settings);
+    const { spinning } = useSelector((state: RootState) => state.roulette);
     const dispatch = useDispatch();
     const { socket } = useContext(SocketContext);
 
@@ -101,7 +102,8 @@ const DefaultUsersListForm = (): JSX.Element => {
                         // TODO: Manejar esto mejor, revisar el tipo de datos que tiene el form, ya que no corresponde luego con los valores del array
                         watch('users').length <= 0 ||
                         ((usersWatch as unknown) as [{ value: string }])[usersWatch.length - 1]
-                            .value === ''
+                            .value === '' ||
+                        spinning
                     }
                 />
             </form>

@@ -1,5 +1,5 @@
 import { AuthTypes, RouletteTypes, SettingsTypes, UiTypes } from './action.types';
-import { ISettings, ISettingsBasic } from '../interfaces/settings';
+import { ISettings, ISettingsBasic, ISettingsImage } from '../interfaces/settings';
 import { IRouletteBasic, IUser } from '../interfaces/roulette';
 
 export type RoulettePayload = {
@@ -43,6 +43,7 @@ export type SettingsPayload = {
     [SettingsTypes.ClearSettings]: void;
     [SettingsTypes.UpdateBasicSettings]: ISettingsBasic;
     [SettingsTypes.UpdateImageUrl]: string;
+    [SettingsTypes.UpdateImageSettings]: ISettingsImage;
     [SettingsTypes.UpdateSongUrl]: string;
     [SettingsTypes.UpdateSongBool]: boolean;
     [SettingsTypes.UpdateDefaultUsers]: Array<string>;

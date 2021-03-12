@@ -31,6 +31,7 @@ const schema = object().shape({
 
 const ColorsForm = (): JSX.Element => {
     const { colors } = useSelector((state: RootState) => state.settings);
+    const { spinning } = useSelector((state: RootState) => state.roulette);
     const dispatch = useDispatch();
     const { socket } = useContext(SocketContext);
 
@@ -104,7 +105,8 @@ const ColorsForm = (): JSX.Element => {
                         // TODO: Manejar esto mejor, revisar el tipo de datos que tiene el form, ya que no corresponde luego con los valores del array
                         watch('colors').length <= 0 ||
                         ((colorsWatch as unknown) as [{ value: string }])[colorsWatch.length - 1]
-                            .value === ''
+                            .value === '' ||
+                        spinning
                     }
                 />
             </form>

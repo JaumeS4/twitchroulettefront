@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuid } from 'uuid';
+import { useSelector } from 'react-redux';
 import Button from '../Button';
 import { SocketContext } from '../../context/SocketContext';
+import { RootState } from '../../types/state.types';
 
 type FormValues = {
     userName: string;
@@ -10,12 +12,14 @@ type FormValues = {
 
 const AddUser = (): JSX.Element => {
     const { socket } = useContext(SocketContext);
+    const { spinning } = useSelector((state: RootState) => state.roulette);
 
     const { register, handleSubmit, watch, reset } = useForm<FormValues>();
 
     const userWatch = watch('userName');
 
     const onSubmit = ({ userName }: FormValues) => {
+        if (spinning) return;
         socket?.emit('add-user-button', { name: userName, uid: uuid(), fromMod: true });
         reset();
     };
@@ -39,7 +43,7 @@ const AddUser = (): JSX.Element => {
                         backgroundColor='bg-green-500'
                         bgHoverColor='hover:bg-green-700'
                         type='submit'
-                        disabled={!userWatch}
+                        disabled={!userWatch || spinning}
                     />
                 </form>
             </div>

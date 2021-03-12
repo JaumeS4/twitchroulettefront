@@ -1,13 +1,14 @@
 import Swal from 'sweetalert2';
 import { fetchWithToken, fetchWithTokenFormData } from '../helpers/fetch';
 import { AppThunk, ReduxThunkDispatch } from '../types';
-import { ISettings, ISettingsBasic } from '../interfaces/settings';
+import { ISettings, ISettingsBasic, ISettingsImage } from '../interfaces/settings';
 import { SettingsTypes } from '../types/action.types';
 import {
     ISetInitialSettingsActionResponse,
     IUpdateBasicSettingsActionResponse,
     IUpdateColorsActionResponse,
     IUpdateDefaultUsersActionResponse,
+    IUpdateImageSettingsActionResponse,
     IUpdateImageUrlActionResponse,
     IUpdateSongBoolActionResponse,
     IUpdateSongUrlActionResponse,
@@ -25,6 +26,13 @@ export const updateBasicSettingsAction = (
 ): IUpdateBasicSettingsActionResponse => ({
     type: SettingsTypes.UpdateBasicSettings,
     payload: basicSettings,
+});
+
+export const updateImageSettingsAction = (
+    imageSettings: ISettingsImage,
+): IUpdateImageSettingsActionResponse => ({
+    type: SettingsTypes.UpdateImageSettings,
+    payload: imageSettings,
 });
 
 export const updateImageUrlAction = (imageUrl: string | null): IUpdateImageUrlActionResponse => ({
@@ -77,6 +85,33 @@ export const updateBasicSettings = (data: ISettingsBasic): AppThunk => {
         const resp = await (await fetchWithToken('settings', data, 'POST')).json();
         if (resp.ok) {
             dispatch(updateBasicSettingsAction(data));
+
+            Swal.fire({
+                titleText: 'Ajustes guardados',
+                text: 'Ajustes guardados correctamente.',
+                icon: 'success',
+                confirmButtonText: 'Cerrar',
+            });
+            return resp.ok;
+        }
+
+        Swal.fire({
+            titleText: 'Error',
+            text:
+                'Ha ocurrido un error guardando los ajustes, pruebe de nuevo o contacte con el administrador.',
+            icon: 'error',
+            confirmButtonText: 'Cerrar',
+        });
+
+        return null;
+    };
+};
+
+export const updateImageSettings = (data: ISettingsImage): AppThunk => {
+    return async (dispatch: ReduxThunkDispatch) => {
+        const resp = await (await fetchWithToken('settings/image', data, 'POST')).json();
+        if (resp.ok) {
+            dispatch(updateImageSettingsAction(data));
 
             Swal.fire({
                 titleText: 'Ajustes guardados',

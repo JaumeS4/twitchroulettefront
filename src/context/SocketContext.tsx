@@ -20,17 +20,17 @@ import {
     updateBasicSettingsAction,
     updateColorsAction,
     updateDefaultUsersAction,
+    updateImageSettingsAction,
     updateImageUrlAction,
     updateSongBoolAction,
     updateSongUrlAction,
 } from '../actions/settings';
-import { ISettingsBasic } from '../interfaces/settings';
+import { ISettingsBasic, ISettingsImage } from '../interfaces/settings';
 import { IResult } from '../interfaces/roulette';
 
 export const SocketContext = createContext<SocketStateType>(null);
 
 export const SocketProvider: React.FC = ({ children }) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { socket, connectSocket, disconnectSocket } = useSocket(
         `${process.env.REACT_APP_SOCKET_URL}`,
     );
@@ -43,7 +43,7 @@ export const SocketProvider: React.FC = ({ children }) => {
     useEffect(() => {
         if (logged || rouletteToken) connectSocket(rouletteToken);
 
-        // if (!logged && !rouletteToken) disconnectSocket();
+        if (!logged && !rouletteToken) disconnectSocket();
     }, [logged, rouletteToken, connectSocket]);
 
     useEffect(() => {
@@ -83,6 +83,10 @@ export const SocketProvider: React.FC = ({ children }) => {
             dispatch(updateBasicSettingsAction(values)),
         );
 
+        socket?.on('update-image-settings', (values: ISettingsImage) =>
+            dispatch(updateImageSettingsAction(values)),
+        );
+
         socket?.on('update-default-users', (users: Array<string>) =>
             dispatch(updateDefaultUsersAction(users)),
         );
@@ -111,6 +115,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             socket?.off('update-sub-mode');
             socket?.off('update-song');
             socket?.off('update-basic-settings');
+            socket?.off('update-image-settings');
             socket?.off('update-default-users');
             socket?.off('update-colors');
             socket?.off('update-image-url');

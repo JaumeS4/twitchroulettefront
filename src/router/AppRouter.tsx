@@ -40,18 +40,17 @@ const AppRouter: React.FC = () => {
                         isAuth={false}
                     />
 
-                    <PrivateRoute
+                    <PublicRoute
                         exact
-                        path='/settings'
-                        component={SettingsPage}
-                        isAuth={!!twitchId}
-                        verified={verified}
+                        path='/new-instance'
+                        component={NewInstanceErrorPage}
+                        isAuth={false}
                     />
 
                     <PrivateRoute
                         exact
-                        path='/new-instance'
-                        component={NewInstanceErrorPage}
+                        path='/settings'
+                        component={SettingsPage}
                         isAuth={!!twitchId}
                         verified={verified}
                     />
