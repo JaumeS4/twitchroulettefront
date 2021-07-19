@@ -78,6 +78,7 @@ const ModalNews = (): JSX.Element => {
                         <div className='text-lg leading-6 mb-5'>
                             <p>- Añadida carga múltiple de usuarios.</p>
                             <p>- Añadido modo manual.</p>
+                            <p>- Añadido manejo de !yo cuando la ruleta está girando.</p>
                             <p>- Solucionado bugs.</p>
                         </div>
 
