@@ -4,6 +4,8 @@ import { IRouletteBasic, IUser } from '../interfaces/roulette';
 
 export type RoulettePayload = {
     [RouletteTypes.SetInitialRoulette]: IRouletteBasic;
+    [RouletteTypes.SetLoadingManualUsers]: boolean;
+    [RouletteTypes.SetLoadingWaitingUsers]: boolean;
     [RouletteTypes.SetUser]: IUser;
     [RouletteTypes.DeleteUser]: string;
     [RouletteTypes.DeleteAllUsers]: void;
@@ -22,6 +24,7 @@ export type RoulettePayload = {
     [RouletteTypes.IncrementColorIndex]: void;
     [RouletteTypes.ResetColorIndex]: void;
     [RouletteTypes.SetSubMode]: boolean;
+    [RouletteTypes.SetManualMode]: boolean;
 };
 
 export type AuthPayload = {
@@ -36,6 +39,7 @@ export type AuthPayload = {
     [AuthTypes.Logout]: void;
     [AuthTypes.SetRouletteToken]: string;
     [AuthTypes.VerifyAccount]: void;
+    [AuthTypes.SetViewedNews]: boolean;
 };
 
 export type SettingsPayload = {

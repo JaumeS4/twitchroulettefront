@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import CardTitle from './CardTitle';
 import Button from '../Button';
 import Input from './Input';
-import FormError from './FormError';
+import FormError from '../FormError';
 import { updateColors } from '../../actions/settings';
 import { RootState } from '../../types/state.types';
 import { SocketContext } from '../../context/SocketContext';
@@ -31,7 +31,9 @@ const schema = object().shape({
 
 const ColorsForm = (): JSX.Element => {
     const { colors } = useSelector((state: RootState) => state.settings);
-    const { spinning } = useSelector((state: RootState) => state.roulette);
+    const { spinning, loadingManualUsers, loadingWaitingUsers } = useSelector(
+        (state: RootState) => state.roulette,
+    );
     const dispatch = useDispatch();
     const { socket } = useContext(SocketContext);
 
@@ -103,10 +105,13 @@ const ColorsForm = (): JSX.Element => {
                     type='submit'
                     disabled={
                         // TODO: Manejar esto mejor, revisar el tipo de datos que tiene el form, ya que no corresponde luego con los valores del array
-                        watch('colors').length <= 0 ||
-                        ((colorsWatch as unknown) as [{ value: string }])[colorsWatch.length - 1]
-                            .value === '' ||
-                        spinning
+                        (watch('colors').length <= 0 ||
+                            ((colorsWatch as unknown) as [{ value: string }])[
+                                colorsWatch.length - 1
+                            ].value === '' ||
+                            spinning ||
+                            loadingManualUsers,
+                        loadingWaitingUsers)
                     }
                 />
             </form>

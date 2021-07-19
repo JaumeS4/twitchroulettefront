@@ -24,6 +24,7 @@ module.exports = {
         'react/react-in-jsx-scope': 'off',
         'react-hooks/exhaustive-deps': 'warn',
         'react/prop-types': ['off'],
+        'jsx-a11y/click-events-have-key-events': 'off',
     },
     settings: {
         react: {

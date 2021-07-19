@@ -58,8 +58,23 @@ export interface ISetSubModeActionResponse {
     type: RouletteTypes;
 }
 
+export interface ISetManualModeActionResponse {
+    payload: boolean;
+    type: RouletteTypes;
+}
+
 export interface ISetInitialRouletteActionResponse {
     payload: IRouletteBasic;
+    type: RouletteTypes;
+}
+
+export interface ISetLoadingManualUsersActionResponse {
+    payload: boolean;
+    type: RouletteTypes;
+}
+
+export interface ISetLoadingWaitingUsersActionResponse {
+    payload: boolean;
     type: RouletteTypes;
 }
 

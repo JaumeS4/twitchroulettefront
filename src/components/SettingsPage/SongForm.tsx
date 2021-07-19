@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch } from 'react-redux';
 import CardTitle from './CardTitle';
 import { uploadFile } from '../../actions/settings';
-import FormError from './FormError';
+import FormError from '../FormError';
 import Button from '../Button';
 import { SocketContext } from '../../context/SocketContext';
 

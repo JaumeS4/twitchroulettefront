@@ -8,6 +8,7 @@ const initialState = {
     logged: false,
     checking: true,
     verified: false,
+    viewedNews: true,
     userId: '',
     twitchId: '',
     twitchName: '',
@@ -36,6 +37,7 @@ const authReducer = (state: AuthStateType = initialState, action: AuthActions): 
                 logged: false,
                 checking: false,
                 verified: false,
+                viewedNews: true,
                 twitchId: '',
                 twitchName: '',
                 twitchProfileImageUrl: '',
@@ -52,6 +54,12 @@ const authReducer = (state: AuthStateType = initialState, action: AuthActions): 
             return {
                 ...state,
                 verified: true,
+            };
+
+        case AuthTypes.SetViewedNews:
+            return {
+                ...state,
+                viewedNews: action.payload,
             };
 
         default:

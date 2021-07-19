@@ -7,7 +7,7 @@ import { v4 as uuid } from 'uuid';
 import CardTitle from './CardTitle';
 import Button from '../Button';
 import Input from './Input';
-import FormError from './FormError';
+import FormError from '../FormError';
 import { updateDefaultUsers } from '../../actions/settings';
 import { RootState } from '../../types/state.types';
 import { SocketContext } from '../../context/SocketContext';

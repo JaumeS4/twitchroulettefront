@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import CardTitle from './CardTitle';
 import Button from '../Button';
 import { deleteImage, uploadFile } from '../../actions/settings';
-import FormError from './FormError';
+import FormError from '../FormError';
 import { RootState } from '../../types/state.types';
 import { SocketContext } from '../../context/SocketContext';
 

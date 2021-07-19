@@ -9,6 +9,9 @@ import {
     resetColorIndexAction,
     setActiveWinnerAction,
     setDefaultRouletteActiveAction,
+    setLoadingManualUsers,
+    setLoadingWaitingUsers,
+    setManualModeAction,
     setResultAction,
     setSpinningAction,
     setSubModeAction,
@@ -27,6 +30,7 @@ import {
 } from '../actions/settings';
 import { ISettingsBasic, ISettingsImage } from '../interfaces/settings';
 import { IResult } from '../interfaces/roulette';
+import { setViewedNews } from '../actions/auth';
 
 export const SocketContext = createContext<SocketStateType>(null);
 
@@ -55,6 +59,14 @@ export const SocketProvider: React.FC = ({ children }) => {
 
         socket?.on('remove-all-users-state', () => dispatch(deleteAllUsers()));
 
+        socket?.on('update-loading-manual-users', (bool: boolean) =>
+            dispatch(setLoadingManualUsers(bool)),
+        );
+
+        socket?.on('update-loading-waiting-users', (bool: boolean) =>
+            dispatch(setLoadingWaitingUsers(bool)),
+        );
+
         socket?.on('update-default-roulette-active', (bool: boolean) =>
             dispatch(setDefaultRouletteActiveAction(bool)),
         );
@@ -76,6 +88,8 @@ export const SocketProvider: React.FC = ({ children }) => {
         socket?.on('set-result', (result: IResult) => dispatch(setResultAction(result)));
 
         socket?.on('update-sub-mode', (bool: boolean) => dispatch(setSubModeAction(bool)));
+
+        socket?.on('update-manual-mode', (bool: boolean) => dispatch(setManualModeAction(bool)));
 
         socket?.on('update-song', (bool: boolean) => dispatch(updateSongBoolAction(bool)));
 
@@ -102,10 +116,14 @@ export const SocketProvider: React.FC = ({ children }) => {
             dispatch(updateSongUrlAction(songUrl)),
         );
 
+        socket?.on('viewed-news', (bool: boolean) => dispatch(setViewedNews(bool)));
+
         return () => {
             socket?.off('spin-roulette-state');
             socket?.off('remove-user-state');
             socket?.off('remove-all-users-state');
+            socket?.off('update-loading-manual-users');
+            socket?.off('update-loading-waiting-users');
             socket?.off('update-default-roulette-active');
             socket?.off('increment-color-index');
             socket?.off('reset-color-index');
@@ -113,6 +131,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             socket?.off('hide-winner');
             socket?.off('set-result');
             socket?.off('update-sub-mode');
+            socket?.off('update-manual-mode');
             socket?.off('update-song');
             socket?.off('update-basic-settings');
             socket?.off('update-image-settings');
@@ -120,6 +139,7 @@ export const SocketProvider: React.FC = ({ children }) => {
             socket?.off('update-colors');
             socket?.off('update-image-url');
             socket?.off('update-song-url');
+            socket?.off('viewed-news');
         };
     }, [socket, dispatch]);
 

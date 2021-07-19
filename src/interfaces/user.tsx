@@ -5,4 +5,5 @@ export interface IUserAuth {
     twitchName: string;
     twitchProfileImageUrl: string;
     rouletteToken: string;
+    viewedNews: boolean;
 }

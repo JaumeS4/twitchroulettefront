@@ -2,7 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { DeepMap, FieldError } from 'react-hook-form';
-import FormError from './FormError';
+import FormError from '../FormError';
 
 type InputProps = {
     name: string;

@@ -6,7 +6,7 @@ import Button from '../Button';
 import { ISettingsImage } from '../../interfaces/settings';
 import { RootState } from '../../types/state.types';
 import { SocketContext } from '../../context/SocketContext';
-import FormError from './FormError';
+import FormError from '../FormError';
 import { updateImageSettings } from '../../actions/settings';
 
 const ImageSettingsForm = (): JSX.Element => {

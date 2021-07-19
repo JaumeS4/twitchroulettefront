@@ -10,18 +10,20 @@ import { SocketContext } from '../../context/SocketContext';
 
 const ButtonsList = (): JSX.Element => {
     const { rouletteToken } = useSelector((state: RootState) => state.auth);
-    const { spinning } = useSelector((state: RootState) => state.roulette);
+    const { spinning, loadingManualUsers, loadingWaitingUsers } = useSelector(
+        (state: RootState) => state.roulette,
+    );
     const dispatch = useDispatch();
     const history = useHistory();
     const { socket } = useContext(SocketContext);
 
     const handleSpinRoulette = () => {
-        if (spinning) return;
+        if (spinning || loadingManualUsers || loadingWaitingUsers) return;
         socket?.emit('spin-roulette');
     };
 
     const handleResetRoulette = () => {
-        if (spinning) return;
+        if (spinning || loadingManualUsers || loadingWaitingUsers) return;
         socket?.emit('reset-roulette');
     };
 

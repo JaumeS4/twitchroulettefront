@@ -13,6 +13,8 @@ import RoulettePage from '../pages/RoulettePage';
 import LoadingFullScreen from '../components/LoadingFullScreen';
 import NewInstanceErrorPage from '../pages/NewInstanceErrorPage';
 import VerifyAccountPage from '../pages/VerifyAccountPage';
+import ChangelogPage from '../pages/Changelog';
+import HelpPage from '../pages/HelpPage';
 
 const AppRouter: React.FC = () => {
     const dispatch = useDispatch();
@@ -59,6 +61,22 @@ const AppRouter: React.FC = () => {
                         exact
                         path='/verify-account'
                         component={VerifyAccountPage}
+                        isAuth={!!twitchId}
+                        verified={verified}
+                    />
+
+                    <PrivateRoute
+                        exact
+                        path='/changelog'
+                        component={ChangelogPage}
+                        isAuth={!!twitchId}
+                        verified={verified}
+                    />
+
+                    <PrivateRoute
+                        exact
+                        path='/help'
+                        component={HelpPage}
                         isAuth={!!twitchId}
                         verified={verified}
                     />

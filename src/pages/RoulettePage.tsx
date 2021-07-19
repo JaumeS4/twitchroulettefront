@@ -23,6 +23,8 @@ const RoulettePage = (): JSX.Element => {
         winnerObject,
         activeWinner,
         spinning,
+        loadingManualUsers,
+        loadingWaitingUsers,
         defaultRouletteActive,
         colorIndex,
     } = useSelector((state: RootState) => state.roulette);
@@ -66,6 +68,8 @@ const RoulettePage = (): JSX.Element => {
         socket?.emit('set-winner', { text, fillStyle });
 
         socket?.emit('set-result', { winner: text, uid: uuid() });
+
+        socket?.emit('add-waiting-users');
 
         setTimeout(() => {
             socket?.emit('hide-winner');
@@ -122,7 +126,7 @@ const RoulettePage = (): JSX.Element => {
     };
 
     const spinRoulette = () => {
-        if (spinning) return;
+        if (spinning || loadingManualUsers || loadingWaitingUsers) return;
 
         socket?.emit('spin-roulette-state');
 
@@ -141,10 +145,6 @@ const RoulettePage = (): JSX.Element => {
     };
 
     const addUser = (user: IUser) => {
-        if (spinning) return;
-
-        // TODO: Dejar que se añadan usuarios en la pantalla donde sale el ganador
-
         if (defaultRouletteActive) {
             wheel = createRoulette([user]);
         } else {
@@ -237,7 +237,8 @@ const RoulettePage = (): JSX.Element => {
     }, [imageHeight, imageWidth, imageBackgroundSize]);
 
     useEffect(() => {
-        if (spinning || loadingRouletteChecking || errorRouletteChecking) return;
+        if (spinning || loadingRouletteChecking || errorRouletteChecking || loadingManualUsers)
+            return;
         forceReDraw();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [radioRoulette, marginTextRoulette]);

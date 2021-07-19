@@ -16,6 +16,9 @@ import {
     ISetActiveWinnerActionResponse,
     ISetDefaultRouletteActiveActionResponse,
     ISetInitialRouletteActionResponse,
+    ISetLoadingManualUsersActionResponse,
+    ISetLoadingWaitingUsersActionResponse,
+    ISetManualModeActionResponse,
     ISetResultActionResponse,
     ISetRouletteTokenResponse,
     ISetSpinningActionResponse,
@@ -84,9 +87,26 @@ export const setSubModeAction = (payload: boolean): ISetSubModeActionResponse =>
     payload,
 });
 
+export const setManualModeAction = (payload: boolean): ISetManualModeActionResponse => ({
+    type: RouletteTypes.SetManualMode,
+    payload,
+});
+
 const setInitialRouletteAction = (roulette: IRouletteBasic): ISetInitialRouletteActionResponse => ({
     type: RouletteTypes.SetInitialRoulette,
     payload: roulette,
+});
+
+export const setLoadingManualUsers = (payload: boolean): ISetLoadingManualUsersActionResponse => ({
+    type: RouletteTypes.SetLoadingManualUsers,
+    payload,
+});
+
+export const setLoadingWaitingUsers = (
+    payload: boolean,
+): ISetLoadingWaitingUsersActionResponse => ({
+    type: RouletteTypes.SetLoadingWaitingUsers,
+    payload,
 });
 
 const loginAction = (user: IUserAuth): ILoginActionResponse => ({

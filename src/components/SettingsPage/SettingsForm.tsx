@@ -5,7 +5,7 @@ import CardTitle from './CardTitle';
 import Button from '../Button';
 import { ISettingsBasic } from '../../interfaces/settings';
 import { updateBasicSettings } from '../../actions/settings';
-import FormError from './FormError';
+import FormError from '../FormError';
 import { RootState } from '../../types/state.types';
 import { SocketContext } from '../../context/SocketContext';
 
@@ -17,7 +17,9 @@ const SettingsForm = (): JSX.Element => {
         radioRoulette,
         marginTextRoulette,
     } = useSelector((state: RootState) => state.settings);
-    const { spinning } = useSelector((state: RootState) => state.roulette);
+    const { spinning, loadingManualUsers, loadingWaitingUsers } = useSelector(
+        (state: RootState) => state.roulette,
+    );
 
     const dispatch = useDispatch();
     const { socket } = useContext(SocketContext);
@@ -212,7 +214,7 @@ const SettingsForm = (): JSX.Element => {
                     backgroundColor='bg-green-500'
                     bgHoverColor='hover:bg-green-600'
                     type='submit'
-                    disabled={spinning}
+                    disabled={spinning || loadingManualUsers || loadingWaitingUsers}
                 />
             </form>
         </div>

@@ -14,6 +14,8 @@ export type RouletteStateType = {
     defaultRouletteActive: boolean;
     colorIndex: number;
     spinning: boolean;
+    loadingManualUsers: boolean;
+    loadingWaitingUsers: boolean;
     activeWinner: boolean;
     winnerObject: {
         text: string;
@@ -21,6 +23,7 @@ export type RouletteStateType = {
     };
     subMode: boolean;
     followMode: boolean;
+    manualMode: boolean;
 };
 
 export type AuthStateType = {
@@ -31,6 +34,7 @@ export type AuthStateType = {
     twitchName: string;
     twitchProfileImageUrl: string;
     rouletteToken: string;
+    viewedNews: boolean;
 };
 
 export type SettingsStateType = {

@@ -17,6 +17,8 @@ const logoutAction = () => ({ type: AuthTypes.Logout });
 
 const verifyAccountAction = () => ({ type: AuthTypes.VerifyAccount });
 
+export const setViewedNews = (bool: boolean) => ({ type: AuthTypes.SetViewedNews, payload: bool });
+
 export const startLogin = (code: string): AppThunk => {
     return async (dispatch: ReduxThunkDispatch) => {
         const resp = await (await fetchWithoutToken('auth/signin', { code }, 'POST')).json();
@@ -31,6 +33,7 @@ export const startLogin = (code: string): AppThunk => {
                     twitchName: resp.twitchName,
                     twitchProfileImageUrl: resp.twitchProfileImageUrl,
                     rouletteToken: resp.rouletteToken,
+                    viewedNews: resp.viewedNews,
                 }),
             );
             await dispatch(startSettingsLoading());
@@ -65,6 +68,7 @@ export const startChecking = (): AppThunk => {
                     twitchName: resp.twitchName,
                     twitchProfileImageUrl: resp.twitchProfileImageUrl,
                     rouletteToken: resp.rouletteToken,
+                    viewedNews: resp.viewedNews,
                 }),
             );
         } else {

@@ -4,6 +4,7 @@ export enum AuthTypes {
     Logout = 'LOGOUT',
     SetRouletteToken = 'SET_ROULETTE_TOKEN',
     VerifyAccount = 'VERIFY_ACCOUNT',
+    SetViewedNews = 'SET_VIEWED_NEWS',
 }
 
 export enum SettingsTypes {
@@ -25,6 +26,8 @@ export enum UiTypes {
 
 export enum RouletteTypes {
     SetInitialRoulette = 'SET_INITIAL_ROULETTE',
+    SetLoadingManualUsers = 'SET_LOADING_MANUAL_USERS_ROULETTE',
+    SetLoadingWaitingUsers = 'SET_LOADING_WAITING_USERS_ROULETTE',
     SetUser = 'SET_USER_ROULETTE',
     DeleteUser = 'DELETE_USER_ROULETTE',
     DeleteAllUsers = 'DELETE_ALL_USERS_ROULETTE',
@@ -38,4 +41,5 @@ export enum RouletteTypes {
     ResetColorIndex = 'RESET_COLOR_INDEX_ROULETTE',
     SetSubMode = 'SET_SUB_MODE_ROULETTE',
     SetFollowMode = 'SET_FOLLOW_MODE_ROULETTE',
+    SetManualMode = 'SET_MANUAL_MODE_ROULETTE',
 }

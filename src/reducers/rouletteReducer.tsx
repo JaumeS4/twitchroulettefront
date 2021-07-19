@@ -13,10 +13,13 @@ const initialState = {
     },
     activeWinner: false,
     spinning: false,
+    loadingManualUsers: false,
+    loadingWaitingUsers: false,
     defaultRouletteActive: true,
     colorIndex: 0,
     subMode: false,
     followMode: true,
+    manualMode: false,
 };
 
 const rouletteReducer = (
@@ -73,6 +76,18 @@ const rouletteReducer = (
                 ],
             };
 
+        case RouletteTypes.SetLoadingManualUsers:
+            return {
+                ...state,
+                loadingManualUsers: action.payload,
+            };
+
+        case RouletteTypes.SetLoadingWaitingUsers:
+            return {
+                ...state,
+                loadingWaitingUsers: action.payload,
+            };
+
         case RouletteTypes.ClearResults:
             return {
                 ...state,
@@ -113,6 +128,12 @@ const rouletteReducer = (
             return {
                 ...state,
                 subMode: action.payload,
+            };
+
+        case RouletteTypes.SetManualMode:
+            return {
+                ...state,
+                manualMode: action.payload,
             };
 
         default:
