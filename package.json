@@ -1,7 +1,7 @@
 {
   "homepage": "https://roulette-app.netlify.app/",
   "name": "twitchroulettefront",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "private": true,
   "dependencies": {
     "@craco/craco": "^6.0.0",

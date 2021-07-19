@@ -73,7 +73,7 @@ const ModalNews = (): JSX.Element => {
                     </div>
                     <div className='my-5 text-center'>
                         <h4 className='font-semibold text-xl mb-5'>
-                            Ruleta actualizada a la versión 2.2.0.
+                            Ruleta actualizada a la versión 2.2.1.
                         </h4>
                         <div className='text-lg leading-6 mb-5'>
                             <p>- Añadida carga múltiple de usuarios.</p>
